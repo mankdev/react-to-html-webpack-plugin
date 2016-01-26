@@ -21,8 +21,11 @@ ReactToHtmlWebpackPlugin.prototype.apply = function(compiler) {
 
       var source = asset.source();
       var Component = evaluate(source, /* filename: */ undefined, /* scope: */ this.options.scope || {}, /* includeGlobals: */ true);
-      var renderMethod = this.options.static ? 'renderToStaticMarkup' : 'renderToString';
-      var html = React[renderMethod](React.createElement(Component));
+	  var renderer = this.options.renderer || function renderer(Component) {
+	    var renderMethod = this.options.static ? 'renderToStaticMarkup' : 'renderToString';
+	    return React[renderMethod](React.createElement(Component));
+	  }.bind(this);
+      var html = renderer(Component);
 
       var template = this.options.template;
 
